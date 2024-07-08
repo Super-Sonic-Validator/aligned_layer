@@ -27,7 +27,7 @@
 
 * [Submitting proofs](guides/0_submitting_proofs.md)
 * [SDK](guides/1_SDK.md)
-* [Using Aligned on your app](guides/2_using_aligned_on_your_app.md)
+* [Integrating Aligned into your Application](guides/2_integration_aligned_into_your_application.md)
 * [Generating proofs for Aligned](guides/3_generating_proofs.md)
 * [Generating & submitting proofs of Rust code with ZKRust](guides/0_5_using_zkrust.md)
 
