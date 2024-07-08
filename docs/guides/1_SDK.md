@@ -46,7 +46,7 @@ pub async fn submit(
 
 ### submit_multiple
 
-Submits mulitple proofs to the batcher to be verified and returns an aligned verification data array.
+Submits multiple proofs to the batcher to be verified and returns an aligned verification data array.
 
 ```rust
 pub async fn submit_multiple(
@@ -59,6 +59,64 @@ pub async fn submit_multiple(
 #### Arguments
 
 - `batcher_addr` - The address of the batcher to which the proof will be submitted.
+- `verification_data` - A verification data array.
+- `wallet` - The wallet used to sign the proof.
+
+#### Returns
+
+- `Result<Option<Vec<AlignedVerificationData>>>, SubmitError>` - An aligned verification data array or an error.
+
+#### Errors
+
+- `MissingParameter` if the verification data vector is empty.
+- `SerdeError` if there is an error serializing the verification data.
+- `ConnectionError` if there is an error sending the message to the websocket.
+
+### submit_and_wait
+
+Submits a proof to the batcher to be verified, waits for the verification on ethereum and returns an aligned verification data struct.
+
+```rust
+pub async fn submit_and_wait(
+    batcher_addr: &str,
+    eth_rpc_url: &str,
+    chain: Chain,
+    verification_data: &VerificationData,
+    wallet: Wallet<SigningKey>,
+) -> Result<Option<AlignedVerificationData>, errors::SubmitError>
+```
+
+#### Arguments
+
+- `batcher_addr` - The address of the batcher to which the proof will be submitted.
+- `eth_rpc_url` - The URL of the Ethereum RPC node.
+- `chain` - The chain on which the verification will be done.
+- `verification_data` - The verification data for the proof.
+- `wallet` - The wallet used to sign the proof.
+
+#### Returns
+
+- `Result<Option<AlignedVerificationData>>, SubmitError>` - An aligned verification data or an error.
+
+### submit_multiple_and_wait
+
+Submits multiple proofs to the batcher to be verified, waits for the verification on Ethereum and returns an aligned verification data array.
+
+```rust
+pub async fn submit_multiple_and_wait(
+    batcher_addr: &str,
+    eth_rpc_url: &str,
+    chain: Chain,
+    verification_data: &[VerificationData],
+    wallet: Wallet<SigningKey>,
+) -> Result<Option<Vec<AlignedVerificationData>>, errors::SubmitError>
+```
+
+#### Arguments
+
+- `batcher_addr` - The address of the batcher to which the proof will be submitted.
+- `eth_rpc_url` - The URL of the Ethereum RPC node.
+- `chain` - The chain on which the verification will be done.
 - `verification_data` - A verification data array.
 - `wallet` - The wallet used to sign the proof.
 

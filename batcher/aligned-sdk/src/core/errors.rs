@@ -41,6 +41,7 @@ pub enum SubmitError {
     InvalidProvingSystem(String),
     InvalidAddress(String, String),
     ProtocolVersionMismatch(u16, u16),
+    BatchVerifiedEventStreamError(String),
     GenericError(String),
 }
 
@@ -74,6 +75,15 @@ impl From<FromHexError> for SubmitError {
     }
 }
 
+impl From<VerificationError> for SubmitError {
+    fn from(e: VerificationError) -> Self {
+        match e {
+            VerificationError::ParsingError(e) => SubmitError::GenericError(e),
+            VerificationError::EthError(e) => SubmitError::EthError(e),
+        }
+    }
+}
+
 impl fmt::Debug for SubmitError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
@@ -100,6 +110,43 @@ impl fmt::Debug for SubmitError {
             SubmitError::ProtocolVersionMismatch(current, expected) => {
                 write!(f, "Protocol version mismatch, SDK should be updated: current version: {} != expected version: {}", current, expected)
             }
+            SubmitError::BatchVerifiedEventStreamError(e) => {
+                write!(f, "`BatchVerified` event stream error: {}", e)
+            }
+            SubmitError::GenericError(e) => write!(f, "Generic error: {}", e),
+        }
+    }
+}
+
+impl fmt::Display for SubmitError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SubmitError::MissingParameter(param) => write!(
+                f,
+                "Missing parameter: {} required for this proving system",
+                param
+            ),
+            SubmitError::ConnectionError(e) => {
+                write!(f, "Web Socket Connection error: {}", e)
+            }
+            SubmitError::IoError(path, e) => {
+                write!(f, "IO error for file: \"{}\", {}", path.display(), e)
+            }
+            SubmitError::SerdeError(e) => write!(f, "Serialization error: {}", e),
+            SubmitError::EthError(e) => write!(f, "Ethereum error: {}", e),
+            SubmitError::SignerError(e) => write!(f, "Signer error: {}", e),
+            SubmitError::InvalidProvingSystem(proving_system) => {
+                write!(f, "Invalid proving system: {}", proving_system)
+            }
+            SubmitError::InvalidAddress(addr, msg) => {
+                write!(f, "Invalid address: {}, {}", addr, msg)
+            }
+            SubmitError::ProtocolVersionMismatch(current, expected) => {
+                write!(f, "Protocol version mismatch, SDK should be updated: current version: {} != expected version: {}", current, expected)
+            }
+            SubmitError::BatchVerifiedEventStreamError(e) => {
+                write!(f, "`BatchVerified` event stream error: {}", e)
+            }
             SubmitError::GenericError(e) => write!(f, "Generic error: {}", e),
         }
     }
@@ -111,6 +158,15 @@ pub enum VerificationError {
 }
 
 impl fmt::Debug for VerificationError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VerificationError::ParsingError(e) => write!(f, "Parsing error: {}", e),
+            VerificationError::EthError(e) => write!(f, "Ethereum error: {}", e),
+        }
+    }
+}
+
+impl fmt::Display for VerificationError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             VerificationError::ParsingError(e) => write!(f, "Parsing error: {}", e),
